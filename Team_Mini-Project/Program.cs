@@ -1,0 +1,245 @@
+﻿
+
+using System.Security.Cryptography;
+using System.Xml.Linq;
+namespace Team_Mini_Project
+{
+
+    internal class Program
+    {
+        private static void Main(string[] args)
+        {
+            while (true)
+            {
+
+                Console.WriteLine("Enter Customer ID");
+                int id = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("Enter Customer Name");
+                string name = Console.ReadLine();
+
+                Console.WriteLine("Enter Customer Phone_Num");
+                string Phone_num = Console.ReadLine();
+
+                Console.WriteLine("Enter Customer_Type By choice (1-4)");
+                Console.WriteLine("1 ==> vip1");
+                Console.WriteLine("2 ==> vip2");
+                Console.WriteLine("3 ==> vip3");
+                Console.WriteLine("4 ==> user");
+
+                int choice1 = int.Parse(Console.ReadLine());
+                customerType customer_type;
+
+                switch (choice1)
+                {
+                    case 1:
+                        customer_type = customerType.vip1;
+                        break;
+                    case 2:
+                        customer_type = customerType.vip2;
+                        break;
+                    case 3:
+                        customer_type = customerType.vip3;
+                        break;
+                    case 4:
+                        customer_type = customerType.user;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice setting to default user");
+                        customer_type = customerType.user;
+                        break;
+                }
+
+                Console.WriteLine("Enter Customer License_Num");
+                string license_num = Console.ReadLine();
+
+                Customers c1 = new Customers(id, name, Phone_num, customer_type, license_num);
+
+                Console.WriteLine(" If you want to add another customer Press + ");
+                string choice = Console.ReadLine();
+
+                if (choice != "+")
+                    break;
+            }
+
+
+
+            Console.Clear();
+
+            Console.WriteLine("To Print The List Of Customer Press 1");
+            int x1 = int.Parse(Console.ReadLine());
+            if (x1 == 1)
+            {
+                foreach (Customers c in Customers.custumer_list)
+                {
+                    Console.WriteLine($"ID: {c.ID} | Name: {c.Name} | Phone: {c.Phone_Num} | Type: {c.Customer_Type} | License: {c.License_Num}");
+                }
+
+            }
+            else
+                Console.Clear();
+
+
+            while (true)
+            {
+
+                Console.WriteLine("Enter  Vehicle_ID");
+                int vehicle_id = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("Enter Vehicle Brand");
+                string brand = Console.ReadLine();
+
+                Console.WriteLine("Enter Vehicle License_plate");
+                string license_plate = Console.ReadLine();
+
+                Console.WriteLine("Enter Statue By choice (1-3)");
+                Console.WriteLine("1 ==> avaliable");
+                Console.WriteLine("2 ==> Rented");
+                Console.WriteLine("3 ==> Maintenance");
+                int choice2 = int.Parse(Console.ReadLine());
+                Statue statue;
+
+                switch (choice2)
+                {
+                    case 1:
+                        statue = Statue.avaliable;
+                        break;
+                    case 2:
+                        statue = Statue.Rented;
+                        break;
+                    case 3:
+                        statue = Statue.Maintenance;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice setting to default user");
+                        statue = Statue.Maintenance;
+                        break;
+                }
+
+                Console.WriteLine("Enter Category By choice (1-3)");
+                Console.WriteLine("1 ==>  Electric_Car");
+                Console.WriteLine("2 ==> Gas_Car");
+                Console.WriteLine("3 ==> Fuel_Car");
+                int choice3 = int.Parse(Console.ReadLine());
+                Category category;
+
+                switch (choice3)
+                {
+                    case 1:
+                        category = Category.Electric_Car;
+                        break;
+                    case 2:
+                        category = Category.Gas_Car;
+                        break;
+                    case 3:
+                        category = Category.Fuel_Car;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice setting to default user");
+                        category = Category.Fuel_Car;
+                        break;
+                }
+
+                Console.WriteLine("Enter Vehicle Price");
+                int price = int.Parse(Console.ReadLine());
+
+                Vehicles v1 = new Vehicles(vehicle_id, brand, license_plate, statue, category, price);
+                Console.Clear();
+                Console.WriteLine(" If you want to add another customer Press + ");
+                string choice = Console.ReadLine();
+
+                if (choice != "+")
+                    break;
+            }
+            Console.WriteLine("To Print The List Of Vehicle Press 1");
+            int x2 = int.Parse(Console.ReadLine());
+            if (x2 == 1)
+            {
+                foreach (Vehicles v in Vehicles.vehicles_list)
+                {
+                    Console.WriteLine($"vehicle_id: {v.Vehicle_ID} | Brand: {v.Brand} | License_plate: {v.License_plate} | statue: {v.statue} | category: {v.category} | Price: {v.Price}");
+                }
+
+            }
+            else
+                Console.Clear();
+        }
+    }
+
+
+
+    namespace Team_Mini_Project
+    {
+        internal class Program
+        {
+            private void Main(string[] args)
+            {
+                IRentalRepository repository = new RentalRepository();
+
+                INotificationService notification =
+                    new ConsoleNotificationService();
+
+                RentalManager manager = new RentalManager();
+
+                RentalService rentalService = new RentalService(
+                    repository,
+                    notification,
+                    manager
+                );
+
+                while (true)
+                {
+                    Console.WriteLine("\n=== Car Rental System ===");
+                    Console.WriteLine("1. Rent a Vehicle");
+                    Console.WriteLine("2. Show All Bookings");
+                    Console.WriteLine("3. Exit");
+                    Console.Write("Choose: ");
+
+                    string choice = Console.ReadLine();
+
+                    switch (choice)
+                    {
+                        case "1":
+                            Console.Write("Customer Name: ");
+                            string name = Console.ReadLine();
+
+                            Console.Write("Vehicle Brand: ");
+                            string brand = Console.ReadLine();
+
+                            Console.Write("Price per day: ");
+                            decimal price = decimal.Parse(Console.ReadLine());
+
+                            Console.Write("Rental Days: ");
+                            int days = int.Parse(Console.ReadLine());
+
+                            Customers customer = new Customers(
+                                Customers.custumer_list.Count + 1, name, "", customerType.user, "");
+
+                            Vehicles vehicle = new Vehicles(
+                                Vehicles.vehicles_list.Count + 1, brand, "", Statue.avaliable, Category.Fuel_Car, price);
+
+                            rentalService.RentVehicle(customer, vehicle, days);
+                            break;
+
+                        case "2":
+                            rentalService.ShowAllBookings();
+                            break;
+
+                        case "3":
+                            return;
+
+                        default:
+                            Console.WriteLine("Invalid Choice");
+                            break;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
